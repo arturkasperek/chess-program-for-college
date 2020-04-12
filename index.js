@@ -24,8 +24,6 @@ window.onload = function() {
 	    flagForPawn = false,
 	    arrFigures = 0,
 	    figureColor = 0,
-	    flagOnCastlingWhite = true,
-	    flagOnCastlingBlack = true,
 	    history = [],
 	    countHistory = 1,
 		king = 0,
@@ -51,7 +49,15 @@ window.onload = function() {
 	    addFigures();
 	    addFigures();
 	    drawFigures();
+			drawActivePlayer();
 	    history.push(JSON.parse(JSON.stringify(arr)));
+	}
+
+	function drawActivePlayer() {
+			document.getElementById('current-player').classList.remove('black');
+			document.getElementById('current-player').classList.remove('white');
+
+			document.getElementById('current-player').classList.add(colorOfAttackPlayer);
 	}
 
 	//drawing functions
@@ -105,7 +111,7 @@ window.onload = function() {
 	            if (arr[i][k] !== "") {
 	                ctx.fillStyle = arr[i][k].figureColor;
 	                ctx.font = "bold 40px serif";
-	                ctx.fillText(arr[i][k].figure, k * widthOfCell + 29, (i + 1) * widthOfCell + 25);
+	                ctx.fillText(arr[i][k].figure, k * widthOfCell + 38, (i + 1) * widthOfCell + 25);
 	            }
 	        }
 	    }
@@ -118,7 +124,7 @@ window.onload = function() {
 	}
 
 	function addFigures() {
-	    for (var i = 0; i < 8; i++) {
+	    for (var i = 0; i < 1; i++) {
 	        addFigure(i, 0, "rook", "black", "♜");
 	        addFigure(i, 1, "rook", "black", "♜");
 	        addFigure(i, 6, "rook", "white", "♖");
@@ -319,7 +325,7 @@ window.onload = function() {
 
 	        ctx.fillStyle = color;
 	        ctx.font = "bold 20px serif";
-	        ctx.fillText("Pick the figure", 3 * widthOfCell - 20 + 30, 3 * widthOfCell + 30);
+	        ctx.fillText("Wybierz figurę", 3 * widthOfCell - 20 + 30, 3 * widthOfCell + 30);
 
 	        ctx.fillStyle = color;
 	        ctx.font = "bold 40px serif";
@@ -337,32 +343,6 @@ window.onload = function() {
 	        ctx.font = "bold 40px serif";
 	        ctx.fillText(arrFigures[3], 4 * widthOfCell + 30, 5 * widthOfCell + 30);
 	    }
-	}
-
-	function castling(figure, x, y) {
-		if (figure === "♔" && flagOnCastlingWhite) {
-            if (y === 7 && x === 2) {
-                addFigure(3, 7, "rook", "white", "♖");
-                arr[7][0] = "";
-            } else if (y === 7 && x === 6) {
-                addFigure(5, 7, "rook", "white", "♖");
-                arr[7][7] = "";
-            }
-        } else if (figure === "♚" && flagOnCastlingBlack) {
-            if (y === 0 && x === 2) {
-                addFigure(3, 0, "rook", "black", "♜");
-                arr[0][0] = "";
-            } else if (y === 0 && x === 6) {
-                addFigure(5, 0, "rook", "black", "♜");
-                arr[0][7] = "";
-            }
-        }
-
-        if (figure === "♔" || figure.figure === "♖") {
-            flagOnCastlingWhite = false;
-        } else if (figure === "♚" || figure.figure === "♜") {
-            flagOnCastlingBlack = false;
-        }
 	}
 
 	canvas.addEventListener('click', e => {
@@ -447,8 +427,6 @@ window.onload = function() {
 	                            blackKing.y = cellY;
 	                        }
 
-	                        castling(figure.figure, cellX, cellY);
-
 	                        arr[cellY][cellX] = figure;
 	                        arr[y][x] = "";
 
@@ -480,14 +458,53 @@ window.onload = function() {
 	                            ctx.font = "bold 60px serif";
 	                            ctx.fillText("Game over", 13, 4 * widthOfCell + 10);
 	                        }
-	                        if (colorOfAttackPlayer === "white") colorOfAttackPlayer = "black";
-	                    	else colorOfAttackPlayer = "white";
+
+	                        if (colorOfAttackPlayer === "white") {
+														colorOfAttackPlayer = "black"
+													}
+	                    		else  {
+														colorOfAttackPlayer = "white"
+													}
+
+													drawActivePlayer();
 	                        break;
 	                    }
 	                }
 	            }
 	        }
 	    }
+
+			const whiteCount = arr.reduce((accI, i) => {
+					const countInRow = i.reduce((accJ, j) => {
+							if (!!j && j.figureColor === 'white') {
+								return accJ + 1;
+							}
+
+							return accJ;
+					}, 0);
+
+					return accI + countInRow;
+			}, 0);
+
+			const blackCount = arr.reduce((accI, i) => {
+					const countInRow = i.reduce((accJ, j) => {
+							if (!!j && j.figureColor === 'black') {
+								return accJ + 1;
+							}
+
+							return accJ;
+					}, 0);
+
+					return accI + countInRow;
+			}, 0);
+
+			setTimeout(() => {
+					if ( whiteCount === 0 ) {
+						alert('Zwyciężył czarny !');
+					} else if (blackCount === 0) {
+						alert('Zwyciężył biały !');
+					}
+			}, 0);
 	});
 
 	//add events for buttons
@@ -503,6 +520,7 @@ window.onload = function() {
 	        else colorOfAttackPlayer = "white";
 	        drawArray();
 	        drawFigures();
+	        drawActivePlayer();
 	    }
 	}
 
@@ -514,11 +532,12 @@ window.onload = function() {
 	        else colorOfAttackPlayer = "white";
 	        drawArray();
 	        drawFigures();
+					drawActivePlayer();
 	    }
 	}
 
 	function forRestart() {
-	    if (confirm("are you sure?")) {
+	    if (confirm("Czy jesteś pewien?")) {
 	        arr = [["", "", "", "", "", "", "", ""],
 	            ["", "", "", "", "", "", "", ""],
 	            ["", "", "", "", "", "", "", ""],
@@ -529,6 +548,7 @@ window.onload = function() {
 	            ["", "", "", "", "", "", "", ""]]
 	        startGame();
 	        colorOfAttackPlayer = "white";
+					drawActivePlayer();
 	    }
 	}
 };
