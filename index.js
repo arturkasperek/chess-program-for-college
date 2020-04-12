@@ -124,7 +124,7 @@ window.onload = function() {
 	}
 
 	function addFigures() {
-	    for (var i = 0; i < 1; i++) {
+	    for (var i = 0; i < 8; i++) {
 	        addFigure(i, 0, "rook", "black", "♜");
 	        addFigure(i, 1, "rook", "black", "♜");
 	        addFigure(i, 6, "rook", "white", "♖");
