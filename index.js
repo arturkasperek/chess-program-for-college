@@ -111,7 +111,7 @@ window.onload = function() {
 	            if (arr[i][k] !== "") {
 	                ctx.fillStyle = arr[i][k].figureColor;
 	                ctx.font = "bold 40px serif";
-	                ctx.fillText(arr[i][k].figure, k * widthOfCell + 38, (i + 1) * widthOfCell + 25);
+	                ctx.fillText(arr[i][k].figure, k * widthOfCell + 38, (i + 1) * widthOfCell + 23);
 	            }
 	        }
 	    }
